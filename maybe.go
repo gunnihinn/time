@@ -201,6 +201,7 @@ func isMonth(l lexeme) bool {
 		"feb",
 		"mar",
 		"apr",
+		"may",
 		"jun",
 		"jul",
 		"aug",
