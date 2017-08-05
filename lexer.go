@@ -13,9 +13,39 @@ const (
 	colon                    // :
 	dash                     // -
 	space                    // ' '
-	dot                      // '.'
+	dot                      // .
 	other
 )
+
+type lexemeAnnotation int
+
+const (
+	unknown        lexemeAnnotation = iota
+	year                            // [0-9]+ (no BC/AD)
+	month                           // 1-12
+	monthLetters                    // Jan, ...
+	day                             // 1-31
+	dayLetters                      // Mon, ..
+	hour                            // 1-24
+	minute                          // 1-59
+	second                          // 1-60 [sic]
+	secondFraction                  // [0-9]+
+	clockTime                       // we know it's on a clock, but not exactly what it is
+	fitf                            // AM/PM
+	timezone                        // GMT, ...
+)
+
+func (l lexeme) isDigit() bool {
+	return l.kind == digit
+}
+
+func (l lexeme) isLetter() bool {
+	return l.kind == letter
+}
+
+func (l lexeme) isColon() bool {
+	return l.kind == colon
+}
 
 func getType(r rune) lexemeType {
 	switch r {
@@ -41,8 +71,9 @@ func getType(r rune) lexemeType {
 }
 
 type lexeme struct {
-	value string
-	kind  lexemeType
+	value      string
+	kind       lexemeType
+	annotation lexemeAnnotation
 }
 
 type lexerState int
