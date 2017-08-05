@@ -4,6 +4,81 @@ import (
 	"testing"
 )
 
+func TestAnnotateClock(t *testing.T) {
+	inputs := [][]lexeme{
+		[]lexeme{
+			lexeme{value: "15", kind: digit},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "04", kind: digit},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "05", kind: digit},
+		},
+		[]lexeme{
+			lexeme{value: "15", kind: digit},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "04", kind: digit},
+		},
+		[]lexeme{
+			lexeme{value: "15", kind: digit},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "04", kind: digit},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "05", kind: digit},
+			lexeme{value: ".", kind: dot},
+			lexeme{value: "123", kind: digit},
+		},
+		[]lexeme{
+			lexeme{value: "15", kind: digit},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "04", kind: digit},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "05", kind: digit},
+			lexeme{value: ".", kind: dot},
+		},
+	}
+
+	expecteds := [][]lexeme{
+		[]lexeme{
+			lexeme{value: "15", kind: digit, annotation: hour},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "04", kind: digit, annotation: minute},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "05", kind: digit, annotation: second},
+		},
+		[]lexeme{
+			lexeme{value: "15", kind: digit, annotation: hour},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "04", kind: digit, annotation: minute},
+		},
+		[]lexeme{
+			lexeme{value: "15", kind: digit, annotation: hour},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "04", kind: digit, annotation: minute},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "05", kind: digit, annotation: second},
+			lexeme{value: ".", kind: dot},
+			lexeme{value: "123", kind: digit, annotation: secondFraction},
+		},
+		[]lexeme{
+			lexeme{value: "15", kind: digit, annotation: hour},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "04", kind: digit, annotation: minute},
+			lexeme{value: ":", kind: colon},
+			lexeme{value: "05", kind: digit, annotation: second},
+			lexeme{value: ".", kind: dot},
+		},
+	}
+
+	for i, input := range inputs {
+		got := Annotate(input)
+		expected := expecteds[i]
+
+		if !equal(got, expected) {
+			t.Errorf("Input '%s':\nGot:     '%v'\nExpected '%v'", input, got, expected)
+		}
+	}
+}
+
 func TestAnnotateTimezone(t *testing.T) {
 	input := []lexeme{
 		lexeme{value: "GMT", kind: letter},
